@@ -6,8 +6,8 @@
 name: notifications-cron
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron: "*/10 * * * *"
+  schedule:
+    - cron: "*/10 * * * *"
 jobs:
   run:
     runs-on: ubuntu-latest
