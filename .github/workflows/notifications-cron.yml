@@ -1,0 +1,24 @@
+# Runs the OreScore email worker (trial reminders, billing notices, feedback).
+# Repo secrets: ORESCORE_API_URL (e.g. https://orescore.net) and
+# NOTIFICATIONS_CRON_SECRET (same value as the server's secret).
+# Manual-only for the first test. After a green manual run, enable the
+# schedule by uncommenting the two lines below.
+name: notifications-cron
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron: "*/10 * * * *"
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: |
+          # Skip (successfully) until both repo secrets are configured.
+          if [ -z "$API_URL" ] || [ -z "$SECRET" ]; then echo "Cron secrets not set; skipping."; exit 0; fi
+          curl --fail-with-body --silent --show-error --max-time 150 \
+            -X POST "$API_URL/api/internal/notifications/run" \
+            -H "Authorization: Bearer $SECRET"
+        env:
+          API_URL: ${{ secrets.ORESCORE_API_URL }}
+          SECRET: ${{ secrets.NOTIFICATIONS_CRON_SECRET }}
