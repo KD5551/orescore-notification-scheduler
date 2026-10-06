@@ -16,7 +16,7 @@ jobs:
       - run: |
           # Skip (successfully) until both repo secrets are configured.
           if [ -z "$API_URL" ] || [ -z "$SECRET" ]; then echo "Cron secrets not set; skipping."; exit 0; fi
-          curl --fail-with-body --silent --show-error --max-time 150 \
+          curl --fail-with-body --silent --show-error --max-time 150 --retry 3 --retry-all-errors --retry-delay 20 \
             -X POST "$API_URL/api/internal/notifications/run" \
             -H "Authorization: Bearer $SECRET"
         env:
